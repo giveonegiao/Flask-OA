@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+    教学任务发布
+{% endblock %}
+
+{% block label %}
+    教学任务发布
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+
+        {% for t in task %}
+{#            <p>{{ t.label }}</p>#}
+            <p>{{ t }}</p>
+{#            {% if t.label in errors_list %}#}
+{#                <p>{{ t.label }}</p>#}
+{#            {% endif %}#}
+        {% endfor %}
+
+        <input class="btn btn-danger btn-block" type="submit" value="提交">
+    </form>
+{#    <p style="color: red">#}
+{#        {% for k in errors %}#}
+{#            <p style="color: red">{{ k.0 }}</p>#}
+{#        {% endfor %}#}
+{#    </p>#}
+{% endblock %}
