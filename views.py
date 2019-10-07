@@ -443,6 +443,7 @@ class LeaveApi(Resource):
         self.result["data"] = self.set_data(leave)
         return self.result
 
+
     def delete(self):
         data = request.form  # 请求数据，类字典对象
         id = data.get("id")  # data里面的id

@@ -9,6 +9,7 @@ SQLALCHEMY_DATABASE_URI = "sqlite:///"+os.path.join(BASE_DIR,"ORM.sqlite") #数�
 #
 # DEBUG = True
 
+
 class Config:
     DEBUG=True
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(BASE_DIR, "ORM.sqlite")  # 数据库地址sqlite

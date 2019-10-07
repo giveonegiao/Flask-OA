@@ -28,6 +28,7 @@ class User(BaseModel):
     password=models.Column(models.String(32))
     email=models.Column(models.String(32))
 
+
 class Leave(BaseModel):
     """
     请假  0
