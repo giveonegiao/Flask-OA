@@ -13,6 +13,7 @@ pymysql.install_as_MySQLdb()
 
 app=Flask(__name__)#实例化app
 
+
 app.config.from_pyfile("settings.py")
 # app.config.from_envvar()#来源于环境变量，环境变量的值是python文件名称
 # app.config.from_json()#来源于json文件，必须符合json格式
