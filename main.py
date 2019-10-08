@@ -1,8 +1,7 @@
-#蓝图
+
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from flask_wtf import CSRFProtect  #导入csrf保护
 from flask_migrate import Migrate
 

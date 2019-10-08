@@ -1,16 +1,30 @@
 import os
+import json
 import hashlib
 import datetime
 import functools
 
 from flask import session
-from main import app
-from models import *
+
 from flask import render_template
 from flask import request
-from models import User
 from flask import redirect
-from main import csrf
+# from main import csrf
+from flask import jsonify #flask封装后的json方法
+
+from main import app
+from settings import STATICFILES_DIR
+
+from app.models import *
+from . import main
+from .forms import TaskForm
+from app import api
+from flask_restful import Resource
+
+# from app.main.forms import TaskForm
+# from main import api
+
+
 
 class Pager:
     """
@@ -185,7 +199,7 @@ def setPassword(password):
     result=md5.hexdigest()
     return result
 
-@app.route("/login/",methods=["GET","POST"])  # 路由
+@main.route("/login/",methods=["GET","POST"])  # 路由
 # @csrf.exempt
 def login():  # 视图
     error_meg=""
@@ -209,9 +223,9 @@ def login():  # 视图
                 error_meg="用户不存在"
         else:
             error_meg="邮箱不能为空"
-    return render_template("login.html",**locals())
+    return render_template("login.html", **locals())
 
-@app.route("/logout/")
+@main.route("/logout/")
 def logout():
     response=redirect("/login/")
     response.delete_cookie("username")
@@ -221,7 +235,7 @@ def logout():
     # del session["username"]
     return response
 
-@app.route("/index/")#然后再进行路由
+@main.route("/index/")#然后再进行路由
 @loginValid    #先执行loginValid
 def index():  # 视图
     c=Curriculum()
@@ -230,17 +244,17 @@ def index():  # 视图
     c.c_time=datetime.datetime.now()
     c.save()
     curr_list=Curriculum.query.all()
-    return render_template("index.html",curr_list=curr_list)
+    return render_template("index.html", curr_list=curr_list)
 
 
-@app.route("/userinfo/")
+@main.route("/userinfo/")
 @loginValid
 def userinfo():
     calendar = Calendar().return_month()
     now = datetime.datetime.now()
     return render_template("userinfo.html", **locals())
 
-@app.route("/register/",methods=["GET","POST"])
+@main.route("/register/",methods=["GET","POST"])
 def register():
     """
     form 表单提交的数据由request.form接受
@@ -258,8 +272,8 @@ def register():
 
 
 
-@app.route("/holiday_leave/",methods=["GET","POST"])
-@csrf.exempt
+@main.route("/holiday_leave/",methods=["GET","POST"])
+# @csrf.exempt
 def holiday_leave():
     if request.method=="POST":
         request_name=request.form.get("request_user")
@@ -282,7 +296,7 @@ def holiday_leave():
     return render_template('holiday_leave.html')
 
 
-@app.route("/leave_list/<int:page>/")
+@main.route("/leave_list/<int:page>/")
 @loginValid
 def leave_list(page):
     """
@@ -292,17 +306,17 @@ def leave_list(page):
     leaves=Leave.query.all()
     pager=Pager(leaves,5)
     page_data=pager.page_data(page)
-    return render_template("leave_list.html",**locals())
+    return render_template("leave_list.html", **locals())
 
 
-from flask import jsonify #flask封装后的json方法
-# @app.route("/cancel/<int:id>/")
+
+# @main.route("/cancel/<int:id>/")
 # def cancel(id):
 #     leave=Leave.query.get(id)
 #     leave.delete()
 #     return jsonify({"data":"删除成功"})
 
-@app.route("/cancel/",methods=["GET","POST"])
+@main.route("/cancel/",methods=["GET","POST"])
 def cancel():
     # id = request.args.get("id")#通过args接受get请求数据
     id = request.form.get("id")
@@ -311,8 +325,7 @@ def cancel():
     return jsonify({"data":"删除成功"})    #返回json数据
 
 
-from forms import TaskForm
-@app.route('/add_task/',methods=["GET","POST"])
+@main.route('/add_task/',methods=["GET","POST"])
 def add_task():
     errors = ""
     task = TaskForm()
@@ -328,11 +341,10 @@ def add_task():
             # print(task.validate_on_submit())# 判断是否是一个有效的post请求
             # print(task.validate())   # 判断是否是一个合法的post请求
             # print(task.data) # 提交的数据
-    return render_template("add_task.html",**locals())
+    return render_template("add_task.html", **locals())
 
 
-from settings import STATICFILES_DIR
-@app.route('/picture/',methods=["GET","POST"])
+@main.route('/picture/',methods=["GET","POST"])
 def picture():
     p = {"picture":"img/1.jpg"}
     if request.method == "POST":
@@ -344,14 +356,14 @@ def picture():
         p = Picture()
         p.picture = file_path
         p.save()
-    return render_template("picture.html",p = p)
+    return render_template("picture.html", p = p)
 
-@app.route("/empty/")
+@main.route("/empty/")
 def empty():
     return render_template("empty.html")
 
-from main import api
-from flask_restful import Resource
+
+
 
 @api.resource("/Api/leave/")
 class LeaveApi(Resource):

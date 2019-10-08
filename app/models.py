@@ -1,4 +1,4 @@
-from main import models
+from app import models
 
 
 class BaseModel(models.Model):

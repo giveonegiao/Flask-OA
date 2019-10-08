@@ -63,7 +63,7 @@ class Pager:
             data = ["没有数据"]
         return data
 
-from models import Curriculum
+from app.models import Curriculum
 if __name__ == '__main__':
     while True:
         page = int(input("页码>>>"))
